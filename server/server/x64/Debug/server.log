@@ -1,0 +1,3 @@
+﻿  server.cpp
+D:\ZJU\计网\lab7\Lab7\server\server\server.cpp(37,63): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
+  server.vcxproj -> D:\ZJU\计网\lab7\Lab7\server\x64\Debug\server.exe
