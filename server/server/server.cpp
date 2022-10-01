@@ -10,7 +10,7 @@ int main()
     //Initialize DLL
     WSADATA wsaData;
     if (!(WSAStartup(MAKEWORD(2, 2), &wsaData) == 0)) {
-        cerr << "WSAStartup failed. The program will exit with code -1." << endl;
+        cerr << "WSAStartup failed. The process will exit with code -1." << endl;
         return -1;
     }
     //Create socket
@@ -28,16 +28,18 @@ int main()
     
     //Start listening from network.
     listen(servSock, 20);
-    SOCKADDR clntAddr;
-    int nSize = sizeof(SOCKADDR);
-    SOCKET clntSock = accept(servSock, (SOCKADDR*)&clntAddr, &nSize);
-
-    //Send messages to client.
-    string msg = "Hello World!";
-    send(clntSock, msg.c_str(), msg.length() + sizeof(char), 0);
-    
+    int cnt = 0;
+    while (cnt < 2) {
+        SOCKADDR clntAddr;
+        int nSize = sizeof(SOCKADDR);
+        SOCKET clntSock = accept(servSock, (SOCKADDR*)&clntAddr, &nSize);
+        //Send messages to client.
+        string msg = "Hello World!";
+        send(clntSock, msg.c_str(), msg.length() + sizeof(char), 0);
+        closesocket(clntSock);
+        cnt++;
+    }
     //Close socket
-    closesocket(clntSock);
     closesocket(servSock);
 
     //Cleanup DLL
