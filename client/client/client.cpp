@@ -2,6 +2,7 @@
 #include <string>
 #include <winsock2.h>
 #include <WS2tcpip.h> //definition of function inet_pton()
+#include <thread>
 #pragma comment (lib,"ws2_32.lib")
 using namespace std;
 
@@ -20,6 +21,19 @@ inline void showMenu2() {
 		<< "Input 3 : Get list of active clients" << endl
 		<< "Input 4 : Send message to another client" << endl
 		<< "Input 5 : Disconnect and exit" << endl;
+}
+
+void rcv(SOCKET& sock) {
+	while (1) {
+		char buf[MAXBYTE] = { 0 };
+		recv(sock, buf, MAXBYTE, 0);
+		string msg(buf);
+		if (buf[0] == '1') cout << "The server time is: " << msg.substr(1) << endl;
+		else if (buf[0] == '2') cout << "The server name is: " << msg.substr(1) << endl;
+		else if (buf[0] == '3') cout << "The list of active clients is: " << endl << msg.substr(1) << endl;
+		else if (buf[0] == '4') cout << msg.substr(1) << endl;
+		else if (buf[0] == '5') break;
+	}
 }
 
 int main()
@@ -49,9 +63,9 @@ int main()
 	sockAddr.sin_family = AF_INET;
 	string serverIP;
 	u_short portNumber;
-	cout << "Please input server IP." << endl;
+	cout << "Please input server IP:" << endl;
 	cin >> serverIP;
-	cout << "Please input port number." << endl;
+	cout << "Please input port number:" << endl;
 	cin >> portNumber;
 	inet_pton(AF_INET, serverIP.c_str(), (void*)&sockAddr.sin_addr);
 	sockAddr.sin_port = htons(portNumber);
@@ -59,8 +73,11 @@ int main()
 		cerr << "Failed to connect to server. The process will exit with code -1.";
 		return -1;
 	};
-	cout << "Successfully connected to the server." << endl;
+	cout << endl << "Successfully connected to the server." << endl;
 	cout << endl;
+	
+	//Get message from server.
+	thread getMsg(rcv, ref(sock));
 
 	while (1) {
 		showMenu2();
@@ -69,27 +86,17 @@ int main()
 			//Get server time
 			string msg = "1";
 			send(sock, msg.c_str(), msg.length() + sizeof(char), 0);
-			char szBuffer[MAXBYTE] = { 0 };
-			recv(sock, szBuffer, MAXBYTE, 0);
-			cout << "The server time is: " << szBuffer << endl;
 		}
 		else if (state == 2) {
 			//Get server name
 			string msg = "2";
 			send(sock, msg.c_str(), msg.length() + sizeof(char), 0);
-			char szBuffer[MAXBYTE] = { 0 };
-			recv(sock, szBuffer, MAXBYTE, 0);
-			
-			cout << "The server name is: ";
-			wcout << (WCHAR*)szBuffer << endl;
 		}
 		else if (state == 3) {
 			//Get list of active clients
 			string msg = "3";
 			send(sock, msg.c_str(), msg.length() + sizeof(char), 0);
-			char szBuffer[MAXBYTE] = { 0 };
-			recv(sock, szBuffer, MAXBYTE, 0);
-			cout << "The list of active clients is: "<< endl << szBuffer << endl;
+			
 		}
 		else if (state == 4) {
 			//Send message to another client
@@ -107,9 +114,6 @@ int main()
 				else msg += temp + '\n';
 			}
 			send(sock, msg.c_str(), msg.length() + sizeof(char), 0);
-			char szBuffer[MAXBYTE] = { 0 };
-			recv(sock, szBuffer, MAXBYTE, 0);
-			cout << szBuffer << endl;
 		}
 		else if (state == 5) {
 			//Disconnect and exit
@@ -118,8 +122,9 @@ int main()
 			break;
 		}
 		else cout << "Invalid input. Please input an number again." << endl;
+		Sleep(100);
 	}
-
+	getMsg.join();
 	//Close socket
 	closesocket(sock);
 

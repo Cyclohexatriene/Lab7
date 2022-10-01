@@ -1,5 +1,10 @@
 ﻿  server.cpp
-D:\ZJU\计网\lab7\Lab7\server\server\server.cpp(60,79): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
-D:\ZJU\计网\lab7\Lab7\server\server\server.cpp(82,71): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
-D:\ZJU\计网\lab7\Lab7\server\server\server.cpp(91,95): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
+D:\ZJU\计网\lab7\Lab7\server\server\server.cpp(31,80): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
+D:\ZJU\计网\lab7\Lab7\server\server\server.cpp(38,113): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
+D:\ZJU\计网\lab7\Lab7\server\server\server.cpp(40,109): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
+D:\ZJU\计网\lab7\Lab7\server\server\server.cpp(48,63): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
+D:\ZJU\计网\lab7\Lab7\server\server\server.cpp(64,72): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
+D:\ZJU\计网\lab7\Lab7\server\server\server.cpp(76,108): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
+D:\ZJU\计网\lab7\Lab7\server\server\server.cpp(77,100): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
+D:\ZJU\计网\lab7\Lab7\server\server\server.cpp(82,72): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
   server.vcxproj -> D:\ZJU\计网\lab7\Lab7\server\x64\Debug\server.exe
