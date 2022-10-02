@@ -42,6 +42,7 @@ int main()
 	WSADATA wsaData;
 	if (!(WSAStartup(MAKEWORD(2, 2), &wsaData) == 0)) {
 		cerr << "WSAStartup failed. The program will exit with code -1." << endl;
+		system("pause");
 		return -1;
 	}
 
@@ -70,7 +71,8 @@ int main()
 	inet_pton(AF_INET, serverIP.c_str(), (void*)&sockAddr.sin_addr);
 	sockAddr.sin_port = htons(portNumber);
 	if (!( connect(sock, (SOCKADDR*)&sockAddr, sizeof(SOCKADDR)) == 0 )) {
-		cerr << "Failed to connect to server. The process will exit with code -1.";
+		cerr << "Failed to connect to server. The process will exit with code -1." << endl;
+		system("pause");
 		return -1;
 	};
 	cout << endl << "Successfully connected to the server." << endl;
@@ -127,7 +129,8 @@ int main()
 	getMsg.join();
 	//Close socket
 	closesocket(sock);
-
+	cout << endl << "Disconnected." << endl;
+	system("pause");
 	WSACleanup();
 	
 }

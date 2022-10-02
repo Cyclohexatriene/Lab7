@@ -18,7 +18,7 @@ string getTime() {
     return string(tmp);
 }
 
-void serve(SOCKET* clntSock,vector<pair<SOCKET*, SOCKADDR*>>& activeClients) {
+void serve(SOCKET* clntSock,string* addr,vector<pair<SOCKET*, SOCKADDR*>>& activeClients) {
     cout << "Received a request." << endl;
 
     //Answer requests
@@ -68,8 +68,7 @@ void serve(SOCKET* clntSock,vector<pair<SOCKET*, SOCKADDR*>>& activeClients) {
             string targetstr;
             int i = 1;
             for (; rcvmsg[i] != ' '; i++) targetstr += rcvmsg[i];
-            rcvmsg[i] = '4';
-            string sdmsg = rcvmsg.substr(i);
+            string sdmsg = "4\nMessage from " + *addr + ":\n" + rcvmsg.substr(i+1);
             int target = stoi(targetstr);
 
             string msg = "4Send massage failed : unvalid number.";
@@ -108,7 +107,7 @@ int main()
     sockaddr_in sockAddr;
     memset(&sockAddr, 0, sizeof(sockAddr));
     sockAddr.sin_family = PF_INET;
-    string serverIP = "127.0.0.1";
+    string serverIP = "10.186.73.199";
     u_short portNumber = 4203;
     inet_pton(AF_INET, serverIP.c_str(), (void*)&sockAddr.sin_addr); //Server IP address
     sockAddr.sin_port = htons(portNumber);
@@ -119,13 +118,21 @@ int main()
 
     vector<pair<SOCKET*,SOCKADDR*>> activeClients; //Store activeClients
     vector<thread*> requests;
+    
    //Create client socket
     while (1) {
         SOCKADDR* clntAddr = new SOCKADDR();
         int nSize = sizeof(SOCKADDR);
-        SOCKET clntSock = accept(servSock, (SOCKADDR*)clntAddr, &nSize);
-        activeClients.push_back({ &clntSock,(SOCKADDR*)clntAddr });
-        thread* thrd = new thread(serve, &clntSock, ref(activeClients));
+        SOCKET* clntSock = new SOCKET();
+        *clntSock = accept(servSock, (SOCKADDR*)clntAddr, &nSize);
+        activeClients.push_back({ clntSock,(SOCKADDR*)clntAddr });
+        IN_ADDR ip = ((SOCKADDR_IN*)clntAddr)->sin_addr;
+        USHORT port = ((SOCKADDR_IN*)clntAddr)->sin_port;
+        char ipdotdec[20];
+        inet_ntop(AF_INET, (void*)&ip, ipdotdec, sizeof(ipdotdec));
+        string* addr = new string();
+        *addr = "[ " + string(ipdotdec) + ":" + to_string(ntohs(port)) + " ]";
+        thread* thrd = new thread(serve, clntSock, addr, ref(activeClients));
         requests.push_back(thrd);
     }
     //Close server socket
