@@ -22,12 +22,13 @@ void serve(SOCKET* clntSock,string* addr,vector<pair<SOCKET*, SOCKADDR*>>& activ
     cout << "Received a request." << endl;
 
     //Answer requests
+    char EOM = -1;
     while (1) {
         char szBuffer[MAXBYTE] = { 0 };
         recv(*clntSock, szBuffer, MAXBYTE, 0);
         if (szBuffer[0] == '1') {
-            char head = '1';
-            string nowTime = head + getTime();
+            string head = "The server time is: ";
+            string nowTime = head + getTime() + EOM;
             send(*clntSock, nowTime.c_str(), nowTime.length() + sizeof(char), 0);
         }
         else if (szBuffer[0] == '2') {
@@ -40,15 +41,11 @@ void serve(SOCKET* clntSock,string* addr,vector<pair<SOCKET*, SOCKADDR*>>& activ
             WideCharToMultiByte(CP_OEMCP, 0, computerName, wcslen(computerName), pCStrKey, pSize, NULL, NULL);
             pCStrKey[pSize] = '\0';
 
-            char res[MAXBYTE] = { 0 };
-            res[0] = '2';
-            int i = 1;
-            for (; pCStrKey[i - 1] != '\0'; i++) res[i] = pCStrKey[i - 1];
-            res[i+1] = '\0';
-            send(*clntSock, res, strlen(res) + sizeof(char), 0);
+            string res = "The server name is: " + string(pCStrKey) + EOM;
+            send(*clntSock, res.c_str(), res.length() + sizeof(char), 0);
         }
         else if (szBuffer[0] == '3') {
-            string msg = "3Seq\tAddress\t\tPort\n";
+            string msg = "The list of active clients is:\n Seq\tAddress\t\tPort\n";
             for (int i = 0; i < activeClients.size(); i++) {
                 msg += '0' + i;
                 msg += "\t";
@@ -60,6 +57,7 @@ void serve(SOCKET* clntSock,string* addr,vector<pair<SOCKET*, SOCKADDR*>>& activ
                 msg += "\t";
                 msg += to_string(ntohs(port));
                 msg += "\n";
+                msg += EOM;
             }
             send(*clntSock, msg.c_str(), msg.length() + sizeof(char), 0);
         }
@@ -68,16 +66,21 @@ void serve(SOCKET* clntSock,string* addr,vector<pair<SOCKET*, SOCKADDR*>>& activ
             string targetstr;
             int i = 1;
             for (; rcvmsg[i] != ' '; i++) targetstr += rcvmsg[i];
-            string sdmsg = "4\nMessage from " + *addr + ":\n" + rcvmsg.substr(i+1);
+            string sdmsg = "\nMessage from " + *addr + ":\n" + rcvmsg.substr(i+1) + EOM;
             int target = stoi(targetstr);
 
-            string msg = "4Send massage failed : unvalid number.";
-            if (target >= activeClients.size()) send(*clntSock, msg.c_str(), msg.length() + sizeof(char), 0);
-            else send(*activeClients[target].first, sdmsg.c_str(), sdmsg.length() + sizeof(char), 0);
+            string errmsg = "Send massage failed : unvalid number." + EOM;
+            string seccessmsg = "Message sent successfully." + EOM;
+            if (target >= activeClients.size()) send(*clntSock, errmsg.c_str(), errmsg.length() + sizeof(char), 0);
+            else {
+                send(*activeClients[target].first, sdmsg.c_str(), sdmsg.length() + sizeof(char), 0);
+                send(*clntSock, seccessmsg.c_str(), seccessmsg.length() + sizeof(char), 0);
+            }
         }
         else if (szBuffer[0] == '5') {
             cout << "A client disconnected." << endl;
             string msg = "5";
+            msg += EOM;
             send(*clntSock, msg.c_str(), msg.length() + sizeof(char), 0);
             break;
         }
@@ -107,7 +110,7 @@ int main()
     sockaddr_in sockAddr;
     memset(&sockAddr, 0, sizeof(sockAddr));
     sockAddr.sin_family = PF_INET;
-    string serverIP = "10.186.73.199";
+    string serverIP = "127.0.0.1";
     u_short portNumber = 4203;
     inet_pton(AF_INET, serverIP.c_str(), (void*)&sockAddr.sin_addr); //Server IP address
     sockAddr.sin_port = htons(portNumber);

@@ -24,15 +24,25 @@ inline void showMenu2() {
 }
 
 void rcv(SOCKET& sock) {
-	while (1) {
+	char EOM = -1;
+	bool ctn = true; //Whether continuously receiving message from server.
+	string msg;
+	string temp;
+	while (ctn) {
 		char buf[MAXBYTE] = { 0 };
 		recv(sock, buf, MAXBYTE, 0);
-		string msg(buf);
-		if (buf[0] == '1') cout << "The server time is: " << msg.substr(1) << endl;
-		else if (buf[0] == '2') cout << "The server name is: " << msg.substr(1) << endl;
-		else if (buf[0] == '3') cout << "The list of active clients is: " << endl << msg.substr(1) << endl;
-		else if (buf[0] == '4') cout << msg.substr(1) << endl;
-		else if (buf[0] == '5') break;
+		msg = string(buf);
+		for (char c : msg) {
+			if (c == EOM) {
+				if (temp == "5") {
+					ctn = false;
+					break;
+				}
+				cout << temp << endl;
+				temp.clear();
+			}
+			else temp += c;
+		}
 	}
 }
 

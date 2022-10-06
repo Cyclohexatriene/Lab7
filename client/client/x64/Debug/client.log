@@ -1,7 +1,7 @@
 ﻿  client.cpp
-D:\ZJU\计网\lab7\Lab7\client\client\client.cpp(90,58): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
-D:\ZJU\计网\lab7\Lab7\client\client\client.cpp(95,58): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
 D:\ZJU\计网\lab7\Lab7\client\client\client.cpp(100,58): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
-D:\ZJU\计网\lab7\Lab7\client\client\client.cpp(118,58): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
-D:\ZJU\计网\lab7\Lab7\client\client\client.cpp(123,58): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
+D:\ZJU\计网\lab7\Lab7\client\client\client.cpp(105,58): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
+D:\ZJU\计网\lab7\Lab7\client\client\client.cpp(110,58): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
+D:\ZJU\计网\lab7\Lab7\client\client\client.cpp(128,58): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
+D:\ZJU\计网\lab7\Lab7\client\client\client.cpp(133,58): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
   client.vcxproj -> D:\ZJU\计网\lab7\Lab7\client\x64\Debug\client.exe
