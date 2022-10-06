@@ -26,12 +26,11 @@ inline void showMenu2() {
 void rcv(SOCKET& sock) {
 	char EOM = -1;
 	bool ctn = true; //Whether continuously receiving message from server.
-	string msg;
 	string temp;
 	while (ctn) {
 		char buf[MAXBYTE] = { 0 };
 		recv(sock, buf, MAXBYTE, 0);
-		msg = string(buf);
+		string msg(buf);
 		for (char c : msg) {
 			if (c == EOM) {
 				if (temp == "5") {
@@ -90,23 +89,26 @@ int main()
 	
 	//Get message from server.
 	thread getMsg(rcv, ref(sock));
-
+	char EOM = -1;
 	while (1) {
 		showMenu2();
 		cin >> state;
 		if (state == 1) {
 			//Get server time
 			string msg = "1";
+			msg += EOM;
 			send(sock, msg.c_str(), msg.length() + sizeof(char), 0);
 		}
 		else if (state == 2) {
 			//Get server name
 			string msg = "2";
+			msg += EOM;
 			send(sock, msg.c_str(), msg.length() + sizeof(char), 0);
 		}
 		else if (state == 3) {
 			//Get list of active clients
 			string msg = "3";
+			msg += EOM;
 			send(sock, msg.c_str(), msg.length() + sizeof(char), 0);
 			
 		}
@@ -125,11 +127,13 @@ int main()
 				if (temp.empty()) break;
 				else msg += temp + '\n';
 			}
+			msg += EOM;
 			send(sock, msg.c_str(), msg.length() + sizeof(char), 0);
 		}
 		else if (state == 5) {
 			//Disconnect and exit
 			string msg = "5";
+			msg += EOM;
 			send(sock, msg.c_str(), msg.length() + sizeof(char), 0);
 			break;
 		}
